@@ -5,5 +5,5 @@ import java.util.Collection;
 public interface TagRepository {
     Collection<Tag> findAll();
 
-    Tag saveTag(Tag tag);
+    Tag save(Tag tag);
 }

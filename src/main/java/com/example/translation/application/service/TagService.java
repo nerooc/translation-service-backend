@@ -20,6 +20,6 @@ public class TagService {
 
     public Tag createTag(TagDetails tagDetails){
         Tag tagToSave = Tag.builder().name(tagDetails.getName()).build();
-        return tagRepository.saveTag(tagToSave);
+        return tagRepository.save(tagToSave);
     }
 }

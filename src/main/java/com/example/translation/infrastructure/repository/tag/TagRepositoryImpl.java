@@ -18,7 +18,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Tag saveTag(Tag tag) {
+    public Tag save(Tag tag) {
         return dao.save(tag);
     }
 }

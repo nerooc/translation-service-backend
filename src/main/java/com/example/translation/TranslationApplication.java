@@ -1,7 +1,12 @@
 package com.example.translation;
 
+import com.example.translation.application.service.LanguageService;
+import com.example.translation.application.service.MessageService;
 import com.example.translation.application.service.TagDetails;
 import com.example.translation.application.service.TagService;
+import com.example.translation.domain.language.Language;
+import com.example.translation.domain.message.Message;
+import com.example.translation.domain.tag.Tag;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,9 +20,12 @@ public class TranslationApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(TagService tagService) {
+	CommandLineRunner run(TagService tagService, LanguageService languageService, MessageService messageService) {
 		return args -> {
-			tagService.createTag(new TagDetails("cool tag"));
+			Tag tag = tagService.createTag(new TagDetails("cool tag"));
+			Language language = languageService.createLanguage(new Language("Polish"));
+			Message message = messageService.createMessage(new Message("bigosik jest pyszny"));
+
 		};
 
 	}
