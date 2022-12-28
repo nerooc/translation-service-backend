@@ -1,11 +1,11 @@
 # translation-service-backend
-Cisco - IT Best Practices course final project
+### Cisco - IT Best Practices course final project
 
+To run this app, execute following commands:
 
-To make this app work in **src/main/resources** add file **secrets.properties** with such content:
 
 ```
-spring.datasource.url=[YOUR DB URL]
-spring.datasource.username=[YOUR DB USERNAME]
-spring.datasource.password={YOUR DB PASSWORD]
+./mvnw clean package -DskipTests
+docker-compose build
+docker-compose up
 ```
