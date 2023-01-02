@@ -25,15 +25,20 @@ public class Language {
     private Long id;
 
     @NotBlank(message = "Name may not be empty")
-    @Size(min = 2, max = 32, message = "Tag name must be between 2 and 32 characters long")
+    @Size(min = 2, max = 32, message = "Language name must be between 2 and 32 characters long")
     private String name;
 
-    @OneToMany(mappedBy = "language")
+    @NotBlank(message = "Code may not be empty")
+    @Size(min = 2, max = 2, message = "Language code must be exactly 2 characters long")
+    private String code;
+
+    @OneToMany(mappedBy = "language", cascade=CascadeType.ALL)
     @JsonIgnore
     Collection<Message> messages = new ArrayList<>();
     @Builder
-    public Language(String name){
+    public Language(String name, String code){
         this.name=name;
+        this.code=code;
     }
 
     public void addMessage(Message message) {

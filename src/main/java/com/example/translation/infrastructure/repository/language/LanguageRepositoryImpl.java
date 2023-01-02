@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -21,5 +22,19 @@ public class LanguageRepositoryImpl implements LanguageRepository {
     @Override
     public Language save(Language language) {
         return dao.save(language);
+    }
+
+    @Override
+    public Optional<Language> getLanguageById(Long id) {
+        return dao.findById(id);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        dao.deleteById(id);
+    }
+
+    public boolean checkIfExists(String code, String name){
+        return dao.findLanguageByCodeOrName(code, name) != null;
     }
 }

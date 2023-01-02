@@ -23,7 +23,7 @@ public class TranslationApplication {
 	CommandLineRunner run(TagService tagService, LanguageService languageService, MessageService messageService) {
 		return args -> {
 			Tag tag = tagService.createTag(new TagDetails("cool tag"));
-			Language language = languageService.createLanguage(new Language("Polish"));
+			Language language = languageService.createLanguage(new Language("Polish", "PL"));
 			Message message = messageService.createMessage(new Message("bigosik jest pyszny"));
 
 		};
