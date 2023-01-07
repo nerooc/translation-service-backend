@@ -22,7 +22,7 @@ public class TranslationApplication {
 	@Bean
 	CommandLineRunner run(TagService tagService, LanguageService languageService, MessageService messageService) {
 		return args -> {
-			Tag tag = tagService.createTag(new TagDetails("cool tag"));
+			Tag tag = tagService.createTag(Tag.builder().name("Awesome").build());
 			Language language = languageService.createLanguage(new Language("Polish", "PL"));
 			Message message = messageService.createMessage(new Message("bigosik jest pyszny"));
 

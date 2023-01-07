@@ -18,8 +18,21 @@ public class TagService {
         return tagRepository.findAll();
     }
 
-    public Tag createTag(TagDetails tagDetails){
-        Tag tagToSave = Tag.builder().name(tagDetails.getName()).build();
-        return tagRepository.save(tagToSave);
+    public Tag createTag(Tag tag){
+        if (tagRepository.exists(tag)) {
+            throw new IllegalStateException("Language with this name or code already exists");
+        }
+        return tagRepository.save(tag);
+    }
+
+    public Tag updateTag(Long id, Tag tag) {
+        return tagRepository.save(Tag.builder()
+                                .id(id)
+                                .name(tag.getName())
+                                .build());
+    }
+
+    public void deleteTag(Long id) {
+        tagRepository.deleteById(id);
     }
 }

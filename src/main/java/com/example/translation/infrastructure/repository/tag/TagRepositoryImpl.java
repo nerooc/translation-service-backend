@@ -21,4 +21,14 @@ public class TagRepositoryImpl implements TagRepository {
     public Tag save(Tag tag) {
         return dao.save(tag);
     }
+
+    @Override
+    public boolean exists(Tag tag) {
+       return dao.findTagByName(tag.getName()).isPresent();
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        dao.deleteById(id);
+    }
 }

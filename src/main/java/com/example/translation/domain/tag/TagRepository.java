@@ -6,4 +6,8 @@ public interface TagRepository {
     Collection<Tag> findAll();
 
     Tag save(Tag tag);
+
+    boolean exists(Tag tag);
+
+    void deleteById(Long id);
 }
