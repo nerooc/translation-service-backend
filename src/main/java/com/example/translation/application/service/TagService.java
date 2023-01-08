@@ -20,7 +20,7 @@ public class TagService {
 
     public Tag createTag(Tag tag){
         if (tagRepository.exists(tag)) {
-            throw new IllegalStateException("Language with this name or code already exists");
+            throw new IllegalStateException("Tag with this name or code already exists");
         }
         return tagRepository.save(tag);
     }
