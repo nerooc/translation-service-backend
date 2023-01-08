@@ -9,16 +9,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
+@Builder
 public class Tag {
     @Id
     @SequenceGenerator(name = "tag_sequence", sequenceName = "tag_sequence", allocationSize = 1)
@@ -36,9 +36,4 @@ public class Tag {
             }, mappedBy = "tags")
     @JsonIgnore
     private Set<Message> messages = new HashSet<>();
-
-    @Builder
-    private Tag(String name) {
-        this.name = name;
-    }
 }
