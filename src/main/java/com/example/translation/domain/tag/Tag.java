@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
@@ -33,7 +32,10 @@ public class Tag {
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
-            }, mappedBy = "tags")
+            })
+    @JoinTable(name = "message_tags",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "message_id"))
     @JsonIgnore
     private Set<Message> messages = new HashSet<>();
 }

@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface LanguageJpaRepository extends JpaRepository<Language, Long> {
     Language findLanguageByCodeOrName(String code, String Name);
+
+    Optional<Language> findLanguageByCode(String code);
 }

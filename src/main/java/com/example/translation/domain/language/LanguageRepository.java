@@ -10,6 +10,8 @@ public interface LanguageRepository {
 
     Optional<Language> getLanguageById(Long id);
 
+    Optional<Language> getLanguageByCode(String code);
+
     void deleteById(Long id);
 
     boolean checkIfExists(String code, String name);

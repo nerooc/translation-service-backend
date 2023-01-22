@@ -1,6 +1,7 @@
 package com.example.translation.application.service;
 
 import com.example.translation.domain.tag.Tag;
+import com.example.translation.domain.tag.TagNotFoundException;
 import com.example.translation.domain.tag.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,15 @@ public class TagService {
 
     public void deleteTag(Long id) {
         tagRepository.deleteById(id);
+    }
+
+    public Tag getTagById(Long id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new TagNotFoundException(id));
+    }
+
+    public Tag getTagByName(String name) {
+        return tagRepository.findTagByName(name)
+                .orElseThrow(() -> new TagNotFoundException(name));
     }
 }

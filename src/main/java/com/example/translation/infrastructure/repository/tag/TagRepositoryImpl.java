@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -30,5 +31,15 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public void deleteById(Long id) {
         dao.deleteById(id);
+    }
+
+    @Override
+    public Optional<Tag> findById(Long id) {
+        return dao.findById(id);
+    }
+
+    @Override
+    public Optional<Tag> findTagByName(String name) {
+        return dao.findTagByName(name);
     }
 }

@@ -15,6 +15,7 @@ import java.util.Optional;
 @Transactional
 public class LanguageService {
     private final LanguageRepository languageRepository;
+    private static final String DEFAULT_LANGUAGE_CODE = "EN";
 
     public Collection<Language> getLanguages() {
         return languageRepository.findAll();
@@ -44,6 +45,11 @@ public class LanguageService {
 
     public void deleteLanguage(Long id){
         languageRepository.deleteById(id);
+    }
+
+    public Language getDefaultLanguage() {
+        return languageRepository.getLanguageByCode(DEFAULT_LANGUAGE_CODE)
+                .orElseThrow(() -> new LanguageNotFoundException(DEFAULT_LANGUAGE_CODE));
     }
 }
 

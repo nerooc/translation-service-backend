@@ -2,7 +2,6 @@ package com.example.translation;
 
 import com.example.translation.application.service.LanguageService;
 import com.example.translation.application.service.MessageService;
-import com.example.translation.application.service.TagDetails;
 import com.example.translation.application.service.TagService;
 import com.example.translation.domain.language.Language;
 import com.example.translation.domain.message.Message;
@@ -11,6 +10,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.util.Collections;
 
 @SpringBootApplication
 public class TranslationApplication {
@@ -22,10 +23,16 @@ public class TranslationApplication {
 	@Bean
 	CommandLineRunner run(TagService tagService, LanguageService languageService, MessageService messageService) {
 		return args -> {
-			Tag tag = tagService.createTag(Tag.builder().name("Awesome").build());
-			Language language = languageService.createLanguage(new Language("Polish", "PL"));
-			Message message = messageService.createMessage(new Message("bigosik jest pyszny"));
+			Tag tag = tagService.createTag(Tag.builder().name("Food").build());
 
+			Language language = languageService.createLanguage(new Language("English", "EN"));
+			/*
+			Message message = messageService.createMessage(Message.builder()
+					.content("Bigosik is delicious")
+					.language(language)
+					.tags(Collections.singletonList(tag))
+					.build());
+			*/
 		};
 
 	}
