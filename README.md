@@ -9,3 +9,5 @@ To run this app, execute following commands:
 docker-compose build
 docker-compose up
 ```
+
+**Swagger** is available after running the app at: <http://localhost:8080/swagger-ui.html>
