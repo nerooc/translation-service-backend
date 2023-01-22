@@ -31,11 +31,9 @@ public class Tag {
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
             })
-    @JoinTable(name = "message_tags",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "message_id"))
     @JsonIgnore
     private Set<Message> messages = new HashSet<>();
 }

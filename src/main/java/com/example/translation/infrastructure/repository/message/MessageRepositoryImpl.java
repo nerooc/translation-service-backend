@@ -2,6 +2,7 @@ package com.example.translation.infrastructure.repository.message;
 
 import com.example.translation.domain.message.Message;
 import com.example.translation.domain.message.MessageRepository;
+import com.example.translation.domain.tag.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,11 @@ public class MessageRepositoryImpl implements MessageRepository {
     @Override
     public void deleteById(Long id) {
         dao.deleteById(id);
+    }
+
+    @Override
+    public Collection<Message> getMessageContainsTag(Tag tag) {
+        return dao.findAllByTagsContains(tag);
     }
 
 

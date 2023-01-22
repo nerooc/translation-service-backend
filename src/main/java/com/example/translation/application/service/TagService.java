@@ -1,5 +1,6 @@
 package com.example.translation.application.service;
 
+import com.example.translation.domain.message.MessageRepository;
 import com.example.translation.domain.tag.Tag;
 import com.example.translation.domain.tag.TagNotFoundException;
 import com.example.translation.domain.tag.TagRepository;
@@ -14,6 +15,7 @@ import java.util.Collection;
 @Transactional
 public class TagService {
     private final TagRepository tagRepository;
+    private final MessageRepository messageRepository;
 
     public Collection<Tag> getTags(){
         return tagRepository.findAll();
@@ -33,7 +35,11 @@ public class TagService {
                                 .build());
     }
 
+    @Transactional
     public void deleteTag(Long id) {
+        Tag tag = tagRepository.findById(id).orElseThrow(() -> new TagNotFoundException(id));
+        messageRepository.getMessageContainsTag(tag)
+                .forEach(message -> message.getTags().removeIf(t -> t.getId().equals(id)));
         tagRepository.deleteById(id);
     }
 

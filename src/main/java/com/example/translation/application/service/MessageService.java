@@ -14,7 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,24 +52,24 @@ public class MessageService {
             throw new IncorrectLanguageForOriginalMessageException();
         }
         message.setLanguage(defaultLanguage);
-        message.setTags(message.getTags()
+        Set<Tag> tags = message.getTags()
                 .stream()
                 .map(tag -> tagService.getTagById(tag.getId()))
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toSet());
+        message.setTags(tags);
         return messageRepository.save(message);
     }
 
     private Message createTranslation(Message message) throws LanguageNotFoundException,
             IncorrectLanguageForTranslationException {
-        message.setOriginalMessage(getMessageById(message.getOriginalMessage().getId()));
-        if (languageService.getDefaultLanguage().getId().equals(message.getLanguage().getId())) {
+        Message originalMessage = messageRepository.getMessageById(message.getOriginalMessage().getId())
+                .orElseThrow(() -> new MessageNotFoundException(message.getOriginalMessage().getId()));
+        message.setOriginalMessage(originalMessage);
+        if (originalMessage.getLanguage().getId().equals(message.getLanguage().getId())) {
             throw new IncorrectLanguageForTranslationException();
         }
         message.setLanguage(languageService.getLanguageById(message.getLanguage().getId()));
-        message.setTags(message.getTags()
-                .stream()
-                .map(tag -> tagService.getTagById(tag.getId()))
-                .collect(Collectors.toSet()));
+        message.setTags(new HashSet<>(originalMessage.getTags()));
         return messageRepository.save(message);
     }
 
@@ -91,6 +94,7 @@ public class MessageService {
         messageRepository.deleteById(id);
     }
 
+    @Transactional
     public Message addTagToMessage(Long id, String tagName) {
         Message messageById = getMessageById(id);
         Tag tag;
@@ -116,4 +120,5 @@ public class MessageService {
         messageById.setContent(messageText);
         return messageById;
     }
+
 }
