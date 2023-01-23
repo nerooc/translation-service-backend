@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
@@ -32,8 +31,9 @@ public class Tag {
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE
-            }, mappedBy = "tags")
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            })
     @JsonIgnore
     private Set<Message> messages = new HashSet<>();
 }

@@ -30,6 +30,11 @@ public class LanguageRepositoryImpl implements LanguageRepository {
     }
 
     @Override
+    public Optional<Language> getLanguageByCode(String code) {
+        return dao.findLanguageByCode(code);
+    }
+
+    @Override
     public void deleteById(Long id) {
         dao.deleteById(id);
     }
@@ -37,4 +42,6 @@ public class LanguageRepositoryImpl implements LanguageRepository {
     public boolean checkIfExists(String code, String name){
         return dao.findLanguageByCodeOrName(code, name) != null;
     }
+
+
 }

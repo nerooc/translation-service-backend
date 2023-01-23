@@ -6,20 +6,25 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 
 @Data
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
+@Builder
 public class Message {
     @Id
     @SequenceGenerator(name = "tag_sequence", sequenceName = "tag_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tag_sequence")
     private Long id;
-    private Long originalMessageId; //probably this should be Message?
+
+    @ManyToOne
+    @JoinColumn(name = "original_message_id")
+    private Message originalMessage;
+
     private String content;
 
     @ManyToOne
@@ -28,16 +33,12 @@ public class Message {
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
+                    CascadeType.MERGE,
                     CascadeType.PERSIST,
-                    CascadeType.MERGE
+                    CascadeType.REFRESH
             })
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "message_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Collection<Tag> tags = new HashSet<>();
-
-    @Builder
-    public Message(String content){
-        this.content = content;
-    }
+    @JoinTable(name = "message_tags",
+            joinColumns = @JoinColumn(name = "message_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+    private Set<Tag> tags = new HashSet<>();
 }

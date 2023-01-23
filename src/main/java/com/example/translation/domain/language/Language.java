@@ -25,10 +25,12 @@ public class Language {
     private Long id;
 
     @NotBlank(message = "Name may not be empty")
+    @Column(unique = true)
     @Size(min = 2, max = 32, message = "Language name must be between 2 and 32 characters long")
     private String name;
 
     @NotBlank(message = "Code may not be empty")
+    @Column(unique = true)
     @Size(min = 2, max = 2, message = "Language code must be exactly 2 characters long")
     private String code;
 
