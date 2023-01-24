@@ -116,6 +116,10 @@ public class MessageService {
     }
 
     public void deleteMessage(Long id) {
+        Message message = getMessageById(id);
+        if (isOriginalMessage(message)) {
+            messageRepository.deleteAll(getTranslationsForMessage(message));
+        }
         messageRepository.deleteById(id);
     }
 
