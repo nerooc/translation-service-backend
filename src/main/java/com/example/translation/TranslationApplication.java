@@ -17,6 +17,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @SpringBootApplication
 public class TranslationApplication {
@@ -49,7 +50,7 @@ public class TranslationApplication {
 			final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 			final CorsConfiguration config = new CorsConfiguration();
 			config.setAllowCredentials(true);
-			config.setAllowedOrigins(Collections.singletonList("*"));
+			config.setAllowedOriginPatterns(List.of("*"));
 			config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
 			config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
 			source.registerCorsConfiguration("/**", config);
