@@ -79,7 +79,9 @@ public class MessageService {
     public Message updateMessage(Long id, Message message) {
         Message messageById = getMessageById(id);
         messageById.setLanguage(languageService.getLanguageById(message.getLanguage().getId()));
-        messageById.setOriginalMessage(getMessageById(message.getOriginalMessage().getId()));
+        if (message.getOriginalMessage() != null) {
+            messageById.setOriginalMessage(getMessageById(message.getOriginalMessage().getId()));
+        }
         messageById.setContent(message.getContent());
         messageById.setTags(message.getTags()
                 .stream()
