@@ -78,23 +78,32 @@ public class MessageService {
     @Transactional
     public Message updateMessage(Long id, Message message) {
         Message messageById = getMessageById(id);
-        messageById.setLanguage(message.getLanguage());
-        messageById.setOriginalMessage(message.getOriginalMessage());
+        messageById.setLanguage(languageService.getLanguageById(message.getLanguage().getId()));
+        if (message.getOriginalMessage() != null) {
+            messageById.setOriginalMessage(getMessageById(message.getOriginalMessage().getId()));
+        }
         messageById.setContent(message.getContent());
-        messageById.setTags(message.getTags());
+        messageById.setTags(message.getTags()
+                .stream()
+                .map(tag -> tagService.getTagById(tag.getId()))
+                .collect(Collectors.toSet()));
         updateTagsForTranslations(messageById);
         return messageById;
     }
 
     @Transactional
     private void updateTagsForTranslations(Message message) {
+        Set<Tag> tags = message.getTags()
+                .stream()
+                .map(tag -> tagService.getTagById(tag.getId()))
+                .collect(Collectors.toSet());
         if (isOriginalMessage(message)) {
             getTranslationsForMessage(message)
-                    .forEach(translation -> translation.setTags(message.getTags()));
+                    .forEach(translation -> translation.setTags(tags));
         } else {
             message.getOriginalMessage().setTags(message.getTags());
             getTranslationsForMessage(message.getOriginalMessage())
-                    .forEach(translation -> translation.setTags(message.getTags()));
+                    .forEach(translation -> translation.setTags(tags));
         }
     }
 

@@ -97,7 +97,7 @@ public class MessageController {
 
     @PatchMapping(path = "/{id}/message")
     public ResponseEntity<Object> updateMessageText(@PathVariable("id") Long id,
-                                                    @RequestBody @Valid String messageText) {
+                                                    @RequestBody String messageText) {
         try {
             Message updatedMessage = messageService.updateMessageText(id, messageText);
             return new ResponseEntity<>(updatedMessage, HttpStatus.OK);
