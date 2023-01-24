@@ -19,4 +19,6 @@ public interface MessageRepository {
     Collection<Message> getMessageContainsTag(Tag tag);
 
     Collection<Message> findAllByOriginalMessageIsNull();
+
+    Collection<Message> findAllByOriginalMessage(Message originalMessage);
 }

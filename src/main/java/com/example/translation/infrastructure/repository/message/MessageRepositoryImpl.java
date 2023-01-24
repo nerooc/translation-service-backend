@@ -49,5 +49,10 @@ public class MessageRepositoryImpl implements MessageRepository {
         return dao.findAllByOriginalMessageIsNull();
     }
 
+    @Override
+    public Collection<Message> findAllByOriginalMessage(Message originalMessage) {
+        return dao.findAllByOriginalMessage(originalMessage);
+    }
+
 
 }

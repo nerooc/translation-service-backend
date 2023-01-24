@@ -107,11 +107,11 @@ public class MessageController {
         }
     }
 
-    @DeleteMapping(path = "/{id}/tags")
-    ResponseEntity<Object> removeTagFromMessage(@PathVariable("id") Long id, @RequestBody String tagName) {
+    @DeleteMapping(path = "/{id}/tags/{tagId}")
+    ResponseEntity<Object> removeTagFromMessage(@PathVariable("id") Long id, @PathVariable("tagId") Long tagId) {
         Message updatedMessage;
         try {
-            updatedMessage = messageService.removeTagFromMessage(id, tagName);
+            updatedMessage = messageService.removeTagFromMessage(id, tagId);
             return new ResponseEntity<>(updatedMessage, HttpStatus.OK);
         } catch (MessageNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Message not found");

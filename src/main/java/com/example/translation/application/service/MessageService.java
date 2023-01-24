@@ -108,11 +108,23 @@ public class MessageService {
     }
 
 
-    public Message removeTagFromMessage(Long id, String tagName) {
+    public Message removeTagFromMessage(Long id, Long tagId) {
+        Tag tag = tagService.getTagById(tagId);
         Message messageById = getMessageById(id);
-        Tag tag = tagService.getTagByName(tagName);
-        messageById.getTags().remove(tag);
+        if (isOriginalMessage(messageById)) {
+            messageById = removeTagFromMessages(messageById, tag);
+            return messageById;
+        } else {
+            removeTagFromMessages(messageById.getOriginalMessage(), tag);
+        }
         return messageById;
+    }
+
+    public Message removeTagFromMessages(Message originalMessage, Tag tag) {
+        Collection<Message> messages = messageRepository.findAllByOriginalMessage(originalMessage);
+        messages.forEach(message -> message.getTags().remove(tag));
+        originalMessage.getTags().remove(tag);
+        return originalMessage;
     }
 
     public Message updateMessageText(Long id, String messageText) {
@@ -123,5 +135,9 @@ public class MessageService {
 
     public Collection<Message> getOriginalMessages() {
         return messageRepository.findAllByOriginalMessageIsNull();
+    }
+
+    public boolean isOriginalMessage(Message message) {
+        return message.getOriginalMessage() == null;
     }
 }
