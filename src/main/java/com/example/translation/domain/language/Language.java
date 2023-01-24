@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,8 +17,8 @@ import java.util.Collection;
 @Data
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
-
+@RequiredArgsConstructor
+@Builder
 public class Language {
     @Id
     @SequenceGenerator(name="language_sequence", sequenceName = "language_sequence", allocationSize = 1)
@@ -37,11 +38,6 @@ public class Language {
     @OneToMany(mappedBy = "language", cascade=CascadeType.ALL)
     @JsonIgnore
     Collection<Message> messages = new ArrayList<>();
-    @Builder
-    public Language(String name, String code){
-        this.name=name;
-        this.code=code;
-    }
 
     public void addMessage(Message message) {
         this.messages.add(message);

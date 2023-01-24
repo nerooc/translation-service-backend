@@ -29,7 +29,7 @@ public class TranslationApplication {
 		return args -> {
 			Tag tag = tagService.createTag(Tag.builder().name("Food").build());
 
-			Language language = languageService.createLanguage(new Language("English", "EN"));
+			Language language = languageService.createLanguage(Language.builder().name("English").code("EN").build());
 			/*
 			Message message = messageService.createMessage(Message.builder()
 					.content("Bigosik is delicious")
