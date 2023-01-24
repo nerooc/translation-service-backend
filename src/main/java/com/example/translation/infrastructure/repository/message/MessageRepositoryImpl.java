@@ -54,5 +54,10 @@ public class MessageRepositoryImpl implements MessageRepository {
         return dao.findAllByOriginalMessage(originalMessage);
     }
 
+    @Override
+    public void deleteAll(Collection<Message> translationsForMessage) {
+        dao.deleteAll(translationsForMessage);
+    }
+
 
 }

@@ -21,4 +21,6 @@ public interface MessageRepository {
     Collection<Message> findAllByOriginalMessageIsNull();
 
     Collection<Message> findAllByOriginalMessage(Message originalMessage);
+
+    void deleteAll(Collection<Message> translationsForMessage);
 }
