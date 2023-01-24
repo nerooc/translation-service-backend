@@ -14,4 +14,6 @@ public interface MessageJpaRepository  extends JpaRepository<Message, Long> {
     Collection<Message> findAllByTagsContains(Tag tag);
 
     Collection<Message> findAllByOriginalMessageIsNull();
+
+    Collection<Message> findAllByOriginalMessage(Message originalMessage);
 }
