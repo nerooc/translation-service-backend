@@ -137,6 +137,7 @@ public class MessageService {
         Message messageById = getMessageById(id);
         if (isOriginalMessage(messageById)) {
             removeTagFromTranslations(messageById, tag);
+            messageById.removeTag(tag);
         } else {
             messageById.getOriginalMessage().removeTag(tag);
             removeTagFromTranslations(messageById.getOriginalMessage(), tag);
