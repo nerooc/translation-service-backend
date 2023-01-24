@@ -8,7 +8,6 @@ import com.example.translation.domain.message.Message;
 import com.example.translation.domain.message.MessageNotFoundException;
 import com.example.translation.domain.tag.TagNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ public class MessageController {
 
     @GetMapping(path = "/{id}/translations")
     Collection<Message> getTranslationForMessage(@PathVariable("id") Long id) {
-        return messageService.getTranslationsForMessage(id);
+        return messageService.getTranslationsForMessageId(id);
     }
 
     @GetMapping(path = "/original")
@@ -83,11 +82,11 @@ public class MessageController {
         }
     }
 
-    @PostMapping(path = "/{id}/tags")
-    ResponseEntity<Object> addTagToMessage(@PathVariable("id") Long id, @RequestBody @Valid String tagName) {
+    @PostMapping(path = "/{id}/tags/{tagId}")
+    ResponseEntity<Object> addTagToMessage(@PathVariable("id") Long id, @PathVariable("tagId") Long tagId) {
         Message updatedMessage;
         try {
-            updatedMessage = messageService.addTagToMessage(id, tagName);
+            updatedMessage = messageService.addTagToMessage(id, tagId);
             return new ResponseEntity<>(updatedMessage, HttpStatus.OK);
         } catch (MessageNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Message not found");
