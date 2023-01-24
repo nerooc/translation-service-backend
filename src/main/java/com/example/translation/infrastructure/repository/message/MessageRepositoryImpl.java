@@ -44,5 +44,10 @@ public class MessageRepositoryImpl implements MessageRepository {
         return dao.findAllByTagsContains(tag);
     }
 
+    @Override
+    public Collection<Message> findAllByOriginalMessageIsNull() {
+        return dao.findAllByOriginalMessageIsNull();
+    }
+
 
 }
