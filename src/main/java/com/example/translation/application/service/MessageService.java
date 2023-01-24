@@ -8,13 +8,11 @@ import com.example.translation.domain.message.Message;
 import com.example.translation.domain.message.MessageNotFoundException;
 import com.example.translation.domain.message.MessageRepository;
 import com.example.translation.domain.tag.Tag;
-import com.example.translation.domain.tag.TagNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -41,8 +39,12 @@ public class MessageService {
         return createTranslation(message);
     }
 
-    public Collection<Message> getTranslationsForMessage(Long id) {
+    public Collection<Message> getTranslationsForMessageId(Long id) {
         return messageRepository.findAllByOriginalMessageId(id);
+    }
+
+    private Collection<Message> getTranslationsForMessage(Message message) {
+        return messageRepository.findAllByOriginalMessage(message);
     }
 
     private Message createOriginalMessage(Message message) throws LanguageNotFoundException,
@@ -73,13 +75,27 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
+    @Transactional
     public Message updateMessage(Long id, Message message) {
         Message messageById = getMessageById(id);
         messageById.setLanguage(message.getLanguage());
         messageById.setOriginalMessage(message.getOriginalMessage());
         messageById.setContent(message.getContent());
         messageById.setTags(message.getTags());
+        updateTagsForTranslations(messageById);
         return messageById;
+    }
+
+    @Transactional
+    private void updateTagsForTranslations(Message message) {
+        if (isOriginalMessage(message)) {
+            getTranslationsForMessage(message)
+                    .forEach(translation -> translation.setTags(message.getTags()));
+        } else {
+            message.getOriginalMessage().setTags(message.getTags());
+            getTranslationsForMessage(message.getOriginalMessage())
+                    .forEach(translation -> translation.setTags(message.getTags()));
+        }
     }
 
     private Message getMessageById(Long id) {
@@ -95,36 +111,43 @@ public class MessageService {
     }
 
     @Transactional
-    public Message addTagToMessage(Long id, String tagName) {
+    public Message addTagToMessage(Long id, Long tagId) {
         Message messageById = getMessageById(id);
-        Tag tag;
-        try {
-            tag = tagService.getTagByName(tagName);
-        } catch (TagNotFoundException e) {
-            tag = tagService.createTag(Tag.builder().name(tagName).build());
+        Tag tag = tagService.getTagById(tagId);
+        if (isOriginalMessage(messageById)) {
+            messageById.addTag(tag);
+            addTagToTranslations(messageById, tag);
+        } else {
+            Message originalMessage = messageById.getOriginalMessage();
+            originalMessage.addTag(tag);
+            addTagToTranslations(originalMessage, tag);
         }
-        messageById.getTags().add(tag);
         return messageById;
     }
 
+    @Transactional
+    private void addTagToTranslations(Message message, Tag tag) {
+        getTranslationsForMessage(message)
+                .forEach(translation -> translation.addTag(tag));
+    }
 
+    @Transactional
     public Message removeTagFromMessage(Long id, Long tagId) {
         Tag tag = tagService.getTagById(tagId);
         Message messageById = getMessageById(id);
         if (isOriginalMessage(messageById)) {
-            messageById = removeTagFromMessages(messageById, tag);
-            return messageById;
+            removeTagFromTranslations(messageById, tag);
         } else {
-            removeTagFromMessages(messageById.getOriginalMessage(), tag);
+            messageById.getOriginalMessage().removeTag(tag);
+            removeTagFromTranslations(messageById.getOriginalMessage(), tag);
         }
         return messageById;
     }
 
-    public Message removeTagFromMessages(Message originalMessage, Tag tag) {
-        Collection<Message> messages = messageRepository.findAllByOriginalMessage(originalMessage);
-        messages.forEach(message -> message.getTags().remove(tag));
-        originalMessage.getTags().remove(tag);
-        return originalMessage;
+    @Transactional
+    public void removeTagFromTranslations(Message originalMessage, Tag tag) {
+        messageRepository.findAllByOriginalMessage(originalMessage)
+                .forEach(message -> message.removeTag(tag));
     }
 
     public Message updateMessageText(Long id, String messageText) {
