@@ -17,4 +17,6 @@ public interface MessageRepository {
     void deleteById(Long id);
 
     Collection<Message> getMessageContainsTag(Tag tag);
+
+    Collection<Message> findAllByOriginalMessageIsNull();
 }

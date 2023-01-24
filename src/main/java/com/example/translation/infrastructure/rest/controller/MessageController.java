@@ -40,6 +40,11 @@ public class MessageController {
         return messageService.getTranslationsForMessage(id);
     }
 
+    @GetMapping(path = "/original")
+    Collection<Message> getOriginalMessages(){
+        return messageService.getOriginalMessages();
+    }
+
     @PostMapping
     ResponseEntity<Object> addMessage(@RequestBody @Valid Message message) {
         Message createdMessage;

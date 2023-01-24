@@ -121,4 +121,7 @@ public class MessageService {
         return messageById;
     }
 
+    public Collection<Message> getOriginalMessages() {
+        return messageRepository.findAllByOriginalMessageIsNull();
+    }
 }
