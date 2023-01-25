@@ -2,12 +2,15 @@ package com.example.translation.application.service;
 
 import com.example.translation.domain.language.Language;
 import com.example.translation.domain.language.LanguageNotFoundException;
+import com.example.translation.domain.language.LanguageRepository;
 import com.example.translation.domain.message.IncorrectLanguageForOriginalMessageException;
 import com.example.translation.domain.message.IncorrectLanguageForTranslationException;
 import com.example.translation.domain.message.Message;
 import com.example.translation.domain.message.MessageNotFoundException;
 import com.example.translation.domain.message.MessageRepository;
 import com.example.translation.domain.tag.Tag;
+import com.example.translation.domain.tag.TagNotFoundException;
+import com.example.translation.domain.tag.TagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +26,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class MessageService {
     private final MessageRepository messageRepository;
-    private final LanguageService languageService;
-    private final TagService tagService;
+    private final LanguageRepository languageRepository;
+    private final TagRepository tagRepository;
+
+    private final String DEFAULT_LANGUAGE_CODE = "EN";
 
     public Collection<Message> getMessages(){
         return messageRepository.findAll();
@@ -47,16 +52,21 @@ public class MessageService {
         return messageRepository.findAllByOriginalMessage(message);
     }
 
+    private Language getDefaultLanguage() {
+        return languageRepository.getLanguageByCode(DEFAULT_LANGUAGE_CODE)
+                .orElseThrow(() -> new LanguageNotFoundException(DEFAULT_LANGUAGE_CODE));
+    }
+
     private Message createOriginalMessage(Message message) throws LanguageNotFoundException,
             IncorrectLanguageForOriginalMessageException {
-        Language defaultLanguage = languageService.getDefaultLanguage();
+        Language defaultLanguage = getDefaultLanguage();
         if (!defaultLanguage.getId().equals(message.getLanguage().getId())) {
             throw new IncorrectLanguageForOriginalMessageException();
         }
         message.setLanguage(defaultLanguage);
         Set<Tag> tags = message.getTags()
                 .stream()
-                .map(tag -> tagService.getTagById(tag.getId()))
+                .map(tag -> getTagById(tag.getId()))
                 .collect(Collectors.toSet());
         message.setTags(tags);
         return messageRepository.save(message);
@@ -70,7 +80,8 @@ public class MessageService {
         if (originalMessage.getLanguage().getId().equals(message.getLanguage().getId())) {
             throw new IncorrectLanguageForTranslationException();
         }
-        message.setLanguage(languageService.getLanguageById(message.getLanguage().getId()));
+        message.setLanguage(languageRepository.getLanguageById(message.getLanguage().getId())
+                .orElseThrow(() -> new LanguageNotFoundException(message.getLanguage().getId())));
         message.setTags(new HashSet<>(originalMessage.getTags()));
         return messageRepository.save(message);
     }
@@ -78,14 +89,15 @@ public class MessageService {
     @Transactional
     public Message updateMessage(Long id, Message message) {
         Message messageById = getMessageById(id);
-        messageById.setLanguage(languageService.getLanguageById(message.getLanguage().getId()));
+        messageById.setLanguage(languageRepository.getLanguageById(message.getLanguage().getId())
+                .orElseThrow(() -> new LanguageNotFoundException(message.getLanguage().getId())));
         if (message.getOriginalMessage() != null) {
             messageById.setOriginalMessage(getMessageById(message.getOriginalMessage().getId()));
         }
         messageById.setContent(message.getContent());
         messageById.setTags(message.getTags()
                 .stream()
-                .map(tag -> tagService.getTagById(tag.getId()))
+                .map(tag -> getTagById(tag.getId()))
                 .collect(Collectors.toSet()));
         updateTagsForTranslations(messageById);
         return messageById;
@@ -95,7 +107,7 @@ public class MessageService {
     private void updateTagsForTranslations(Message message) {
         Set<Tag> tags = message.getTags()
                 .stream()
-                .map(tag -> tagService.getTagById(tag.getId()))
+                .map(tag -> getTagById(tag.getId()))
                 .collect(Collectors.toSet());
         if (isOriginalMessage(message)) {
             getTranslationsForMessage(message)
@@ -126,7 +138,7 @@ public class MessageService {
     @Transactional
     public Message addTagToMessage(Long id, Long tagId) {
         Message messageById = getMessageById(id);
-        Tag tag = tagService.getTagById(tagId);
+        Tag tag = getTagById(tagId);
         if (isOriginalMessage(messageById)) {
             messageById.addTag(tag);
             addTagToTranslations(messageById, tag);
@@ -146,7 +158,7 @@ public class MessageService {
 
     @Transactional
     public Message removeTagFromMessage(Long id, Long tagId) {
-        Tag tag = tagService.getTagById(tagId);
+        Tag tag = getTagById(tagId);
         Message messageById = getMessageById(id);
         if (isOriginalMessage(messageById)) {
             removeTagFromTranslations(messageById, tag);
@@ -176,5 +188,10 @@ public class MessageService {
 
     public boolean isOriginalMessage(Message message) {
         return message.getOriginalMessage() == null;
+    }
+
+    private Tag getTagById(Long id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new TagNotFoundException(id));
     }
 }
